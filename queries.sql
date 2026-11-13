@@ -14,7 +14,7 @@ CREATE TABLE entries (
   date date DEFAULT CURRENT_DATE,
   id_author int,
   category varchar(15),
-  FOREIGN KEY (id_author) REFERENCES authors(id_author)
+  FOREIGN KEY (id_author) REFERENCES authors(id_author) ON DELETE CASCADE
 );
 -- Insertar datos en tabla authors
 INSERT INTO authors(name,surname,email,image)
@@ -54,3 +54,6 @@ ORDER BY entries.title;
 UPDATE entries
 	SET content='Back is back', date='2024-06-17', id_author=(SELECT id_author FROM authors WHERE email='alvaru@thebridgeschool.es'), category='Software'
 	WHERE title='Estamos de Lunes de Back';
+
+DELETE FROM entries WHERE title = $1;
+DELETE FROM entries WHERE id_entry = $1;

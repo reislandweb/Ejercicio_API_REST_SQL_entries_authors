@@ -37,6 +37,7 @@ const getByEmailAuthor = async (email) => {
 const postCreateAuthor = async (name, surname, email, image) => {
     let client,result;
     try {
+        
         client = await pool.connect();
         result = await client.query(queriesAuthor.postCreateAuthor,[ name, surname, email, image ])
     } catch (err) {
@@ -90,12 +91,27 @@ const delAuthor = async (email) => {
     }
     return result.rows;
 }
+
+const validationEmail = async (email) => {
+    let client,result;
+    try{
+        client = await pool.connect();
+        result = await client.query(queriesAuthor.validationEmail,[email]);
+    } catch (err) {
+        console.log(err)
+        throw err;
+    } finally {
+        client.release();
+    }
+    return result.rowCount;
+}
 // delAuthor("Pepe").then(data => console.log(data));
 const author = {
     getAllAuthor,
     getByEmailAuthor,
     postCreateAuthor,
     putUpdateAuthor,
-    delAuthor
+    delAuthor,
+    validationEmail
 }
 module.exports = author;

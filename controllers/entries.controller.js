@@ -14,17 +14,23 @@ const getEntries = async (req, res) => {
     }
 }
 const putTitle = async (req, res) => {
-
+    
     let { content, category, title } = req.body;
-
     try {
-        if(!content || !category || !title) {
-            return res.status(400).json({message: `Error faltan uno de los datos`})
+        const entryExists = await entry.titleValidation(title)
+        console.log(entryExists);
+        if(!entryExists) {
+            return res.status(404).json({
+                success: false,
+                message: 'Error: El usuario no existe en la BBDD'
+            })
         } else {
-            await entry.putTitle(content, category, title);
+            let result = await entry.putTitle(content, category, title);
             res.status(200).json({message: `Se ha modificado la entry ${title}`})
+            console.log(result);
         }
     } catch (err) {
+        console.log(err);
         res.status(500).json({ error: "Error en el servidor" });
     }
 }
@@ -34,8 +40,15 @@ const deleteTitle = async (req, res) => {
         if(!title) {
             return res.status(400).json({message: `Error al borrar`})
         } else {
-            await entry.deleteTitle(title)
-            res.status(200).json({message: `Se ha borrado la entry ${title}`})
+            const entryExists = await entry.deleteTitle(title)
+            if(!entryExists || entryExists.length === 0 ) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Error: No existe ninguna entrada con ese título en la BBDD'
+                });
+            } else {
+                res.status(200).json({message: `Se ha borrado la entry ${title}`})
+            }
         }
     } catch (err) {
         res.status(500).json({ error: "Error en el servidor" });

@@ -3,7 +3,6 @@ const queries = require('../queries/entries.queries.js');
 
 const getEntriesByEmail = async (email)  => {
     let client, result1;
-
     try {
         client = await pool.connect();
         result1 = await client.query(queries.getEntriesByEmail,[email])
@@ -65,13 +64,28 @@ const deleteTitle = async (title) => {
     }
     return result4.rows;
 }
-// deleteTitle("Amanece Madrid lleno de arena").then(data => console.log(data));
+//deleteTitle("Amanece Madrid lleno de arena").then(data => console.log(data));
+
+const titleValidation = async (title) => {
+    let client, result;
+    try {
+        client = await pool.connect()
+        result = await client.query(queries.titleValidation, [title])
+    } catch(err) {
+        console.log(err);
+        throw err;
+    } finally {
+        client.release();
+    }
+    return result.rowCount;
+}
 
 const entries = {
     getEntriesByEmail,
     getAllEntries,
     putTitle,
-    deleteTitle
+    deleteTitle,
+    titleValidation
 }
 
 module.exports = entries;
